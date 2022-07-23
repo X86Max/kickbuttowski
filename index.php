@@ -1,58 +1,45 @@
 <?php
 
-$errors = ”;
+#Receive user input
+$email_address = $_POST['email_address'];
+$feedback = $_POST['feedback'];
 
-$myemail = ‘kickbuttowskithegame@gmail.com’;//<—–Put Your email address here. if(empty($_POST[‘name’]) ||
-
-empty($_POST[’email’]) ||
-
-empty($_POST[‘message’]))
-
-{
-
-$errors .= “\n Error: all fields are required”;
-
+#Filter user input
+function filter_email_header($form_field) {  
+return preg_replace('/[nr|!/<>^$%*&]+/','',$form_field);
 }
 
-$name = $_POST[‘name’];
+$email_address  = filter_email_header($email_address);
 
-$email_address = $_POST[’email’];
+#Send email
+$headers = "From: $email_addressn";
+$sent = mail('kickbuttowskithegame@gmail.com', 'Feedback Form Submission', $feedback, $headers);
 
-$message = $_POST[‘message’];
+#Thank user or notify them of a problem
+if ($sent) {
 
-if (!preg_match(
+?><html>
+<head>
+<title>Thank You</title>
+</head>
+<body>
+<h1>Thank You</h1>
+<p>Thank you for your feedback.</p>
+</body>
+</html>
+<?php
 
-“/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/i”, $email_address))
+} else {
 
-{
-
-$errors .= “\n Error: Invalid email address”;
-
+?><html>
+<head>
+<title>Something went wrong</title>
+</head>
+<body>
+<h1>Something went wrong</h1>
+<p>We could not send your feedback. Please try again.</p>
+</body>
+</html>
+<?php
 }
-
-if( empty($errors))
-
-{
-
-$to = $myemail;
-
-$email_subject = “Contact form submission: $name”;
-  $email_body = “You have received a new message. “.
-
-” Here are the details:\n Name: $name \n “.
-
-“Email: $email_address\n Message \n $message”;
-
-$headers = “From: $myemail\n”;
-
-$headers .= “Reply-To: $email_address”;
-
-mail($to,$email_subject,$email_body,$headers);
-
-//redirect to the ‘thank you’ page
-
-header(‘Location: play-now.html’);
-
-}
-
 ?>
